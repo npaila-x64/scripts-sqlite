@@ -1,0 +1,113 @@
+-- Inserción de datos --
+
+-- Como hay valores estáticos para los medios de pago, se agregan.
+INSERT INTO medio_de_pago (nombre) VALUES ("Efectivo"), ("Débito"), ("Crédito"), ("Transferencia");
+
+-- Como hay valores estáticos para los tipos de producto, se agregan.
+INSERT INTO tipo_producto (nombre) VALUES ("Preparado"), ("Congelado"), ("Bebida"), ("Empaquetado");
+
+-- Como hay valores estáticos para los roles, se agregan.
+INSERT INTO rol (id, tipo, comisiones)
+VALUES
+(1, "Cajero", 1000),
+(2, "Repartidor", 1500),
+(3, "Chef", 2000);
+
+-- Se agregan boletas hipotéticas a la tabla de boletas.
+INSERT INTO boleta (n_serial, estado, fecha, monto, medio_de_pago_id)
+VALUES
+(10001, "Pagada", "2023-07-01", 10500, 1),
+(10002, "Pagada", "2023-07-02", 15500, 2),
+(10003, "Pendiente", "2023-07-03", 20500, 3);
+
+-- Se agregan productos hipotéticos a la tabla de productos.
+INSERT INTO producto (id, nombre, descripcion, cantidad, precio, tipo_id)
+VALUES
+(1, "Pizza Margarita", "Pizza con tomate, queso y albahaca", 20, 5000, 1),
+(2, "Empanada de queso", "Empanada horneada de queso", 50, 1000, 1),
+(3, "Jugo natural de naranja", "Jugo exprimido de naranja natural", 30, 1500, 3);
+
+-- Se agregan personas hipotéticas a la tabla de clientes.
+INSERT INTO cliente (rut, nombre, apellido, direccion, telefono) 
+VALUES 
+("12345678-9", "Juan", "Pérez", "Calle Falsa 123", 123456789), 
+("23456789-0", "María", "González", "Avenida Siempre Viva 456", 234567890), 
+("34567890-1", "Carlos", "Rodríguez", "Paseo Ahumada 789", 345678901);
+
+-- Se agregan empleados hipotéticos a la tabla de empleados.
+INSERT INTO empleado (rut, nombre1, nombre2, apellido1, apellido2, direccion, sueldo_actual, telefono, rol_id)
+VALUES
+("98765432-1", "Roberto", "Andrés", "Muñoz", "Fuentes", "Boulevard 123", 850000, 987654321, 1),
+("87654321-2", "Ana", "María", "Gutiérrez", "Soto", "Pasaje 456", 950000, 876543212, 2),
+("76543210-3", "Fernando", "José", "Alarcón", "Vega", "Avenida 789", 1050000, 765432103, 3);
+
+-- Se agregan órdenes hipotéticas a la tabla de órdenes.
+INSERT INTO orden (id, estado, boleta_n_serial, cliente_rut, empleado_rut)
+VALUES
+(1, "Preparando", 10001, "12345678-9", "98765432-1"),
+(2, "Enviado", 10002, "23456789-0", "98765432-1"),
+(3, "Entregado", 10003, "34567890-1", "98765432-1");
+
+-- Se agregan ingredientes hipotéticos a la tabla de ingredientes.
+INSERT INTO ingrediente (id, nombre, descripcion, cantidad)
+VALUES
+(1, "Tomate", "Tomate fresco", 30),
+(2, "Queso", "Queso mozzarella", 20),
+(3, "Albahaca", "Albahaca fresca", 15);
+
+-- Se agregan reservas hipotéticas a la tabla de reservas.
+INSERT INTO reserva (id, hora_busqueda, estado, orden_id)
+VALUES
+(1, "09:00:00", "Activa", 1),
+(2, "13:00:00", "Activa", 2),
+(3, "18:00:00", "Activa", 3);
+
+-- Se agregan repartos hipotéticos a la tabla de repartos.
+INSERT INTO reparto (id, estado, indicaciones, fecha_salida, fecha_llegada, empleado_rut, orden_id)
+VALUES
+(1, "En camino", "Entregar en portería", "2023-07-01 10:00:00", "2023-07-01 11:00:00", "87654321-2", 1),
+(2, "Entregado", "Llamar al llegar", "2023-07-02 14:00:00", "2023-07-02 14:30:00", "87654321-2", 2),
+(3, "En camino", "Edificio azul", "2023-07-03 19:00:00", NULL, "87654321-2", 3);
+
+-- Se agregan proveedores hipotéticos a la tabla de proveedores.
+INSERT INTO proveedor (id, nombre, telefono, contacto)
+VALUES
+(1, "Proveedor Frutas", "12345678", "pedro.perez@gmail.com"),
+(2, "Proveedor Carnes", "23456789", "maria.gonzalez@yahoo.es"),
+(3, "Proveedor Lácteos", "34567890", "juan.rodriguez@ufro.cl");
+
+-- Se agregan registros de sueldo hipotéticos a la tabla de registros de sueldo.
+INSERT INTO registro_sueldo (id, fecha, monto, empleado_rut)
+VALUES
+(1, "2023-06-30", 850000, "98765432-1"),
+(2, "2023-06-30", 950000, "87654321-2"),
+(3, "2023-06-30", 1050000, "76543210-3");
+
+-- Se agregan lineas de órden hipotéticas a la tabla de lineas de órden.
+INSERT INTO linea_orden (id, orden_id, producto_id, cantidad, precio_unitario)
+VALUES
+(1, 1, 1, 2, 5000),
+(2, 2, 2, 3, 1000),
+(3, 3, 3, 1, 1500);
+
+-- Se agregan registros de empleados preparando productos a la tabla de empleado prepara producto.
+INSERT INTO empleado_prepara_producto (id, producto_id, empleado_rut, fecha)
+VALUES
+(1, 1, "76543210-3", "2023-07-01"),
+(2, 2, "76543210-3", "2023-07-02"),
+(3, 3, "76543210-3", "2023-07-03");
+
+-- Se agregan registros de ingredientes por proveedor a la tabla de ingrediente por proveedor.
+INSERT INTO ingrediente_por_proveedor (ingrediente_id, proveedor_id)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3);
+
+-- Se agregan registros de ingredientes por producto a la tabla de ingredientes por producto.
+INSERT INTO ingrediente_por_producto (producto_id, ingrediente_id)
+VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(2, 2);

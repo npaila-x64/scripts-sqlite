@@ -1,0 +1,10 @@
+-- Creación de índices --
+
+-- Se crea un índice para optimizar la búsqueda de productos por nombre.
+CREATE INDEX idx_producto_nombre ON producto(nombre);
+
+-- Se crea un índice para optimizar la búsqueda de clientes por rut.
+CREATE INDEX idx_cliente_rut ON cliente(rut);
+
+-- Se crea un índice para optimizar la búsqueda de orden por estado.
+CREATE INDEX idx_orden_estado ON orden(estado);

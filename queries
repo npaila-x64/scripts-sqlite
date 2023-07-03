@@ -1,0 +1,86 @@
+-- Consultas simples --
+
+-- Selecciona todos los productos.
+SELECT * FROM producto;
+
+-- Selecciona todos los clientes.
+SELECT * FROM cliente;
+
+-- Selecciona todas las órdenes preparadas.
+SELECT * FROM orden WHERE estado = 'Preparado';
+
+-- Selecciona todos los productos con un precio mayor a 5000.
+SELECT * FROM producto WHERE precio > 5000;
+
+-- Selecciona todas las boletas con un monto mayor a 10000.
+SELECT * FROM boleta WHERE monto > 10000;
+
+-- Updates de tablas --
+
+-- Se actualiza el precio del producto con id 1.
+UPDATE producto
+SET precio = 6000
+WHERE id = 1;
+
+-- Se da un aumento de sueldo al empleado con rut 87654321-2.
+UPDATE empleado
+SET sueldo_actual = 1200000
+WHERE rut = '87654321-2';
+
+-- Cambia el estado de la orden 2 a entregado.
+UPDATE orden
+SET estado = 'Entregado'
+WHERE id = 2;
+
+-- Deletes de registros --
+
+-- Se elimina la linea de órden con id 1.
+DELETE FROM linea_orden
+WHERE id = 1;
+
+-- Se elimina el cliente con rut 11111111-1 (No existe).
+DELETE FROM cliente
+WHERE rut = '11111111-1';
+
+-- Subconsultas--
+
+-- Dos tablas --
+
+-- Selecciona todos los productos que están en una linea de órden.
+SELECT p.* 
+FROM producto p
+WHERE p.id IN (
+  SELECT lo.producto_id
+  FROM linea_orden lo
+);
+
+-- Selecciona todos los productos preparados.
+SELECT * 
+FROM producto 
+INNER JOIN tipo_producto ON producto.tipo_id = tipo_producto.id
+WHERE tipo_producto.nombre = "Preparado";
+
+-- Tres tablas --
+
+-- Muestra el producto junto su tipo y sus ingredientes.
+SELECT producto.nombre AS Producto, tipo_producto.nombre AS Tipo, ingrediente.nombre AS Ingrediente
+FROM producto
+INNER JOIN tipo_producto ON producto.tipo_id = tipo_producto.id
+INNER JOIN ingrediente_por_producto ON producto.id = ingrediente_por_producto.producto_id
+INNER JOIN ingrediente ON ingrediente_por_producto.ingrediente_id = ingrediente.id;
+
+-- Muestra las órdenes con los datos de los clientes y el empleado que las maneja.
+SELECT orden.id AS Orden, cliente.nombre AS Cliente, empleado.nombre1 || ' ' || empleado.apellido1 AS Empleado
+FROM orden
+INNER JOIN cliente ON orden.cliente_rut = cliente.rut
+INNER JOIN empleado ON orden.empleado_rut = empleado.rut;
+
+-- Cuatro tablas --
+
+-- Muestra las órdenes, con sus respectivos productos, sus respectivos clientes, y el respectivo empleado a cargo.
+SELECT orden.id AS Orden, producto.nombre AS Producto, cliente.nombre AS Cliente, empleado.nombre1 || ' ' || empleado.apellido1 AS Empleado
+FROM orden
+INNER JOIN linea_orden ON orden.id = linea_orden.orden_id
+INNER JOIN producto ON linea_orden.producto_id = producto.id
+INNER JOIN cliente ON orden.cliente_rut = cliente.rut
+INNER JOIN empleado ON orden.empleado_rut = empleado.rut;

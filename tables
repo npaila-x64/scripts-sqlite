@@ -1,0 +1,164 @@
+-- Se habilita la implementación de claves foráneas --
+PRAGMA foreign_keys = ON;
+
+-- Creación de tablas --
+
+-- Crea la tabla para los medios de pago.
+CREATE TABLE IF NOT EXISTS medio_de_pago (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL
+);
+
+-- Crea la tabla para los tipos de producto.
+CREATE TABLE IF NOT EXISTS tipo_producto (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nombre TEXT NOT NULL
+);
+
+-- Crea la tabla de roles.
+CREATE TABLE IF NOT EXISTS rol (
+  id INTEGER PRIMARY KEY NOT NULL,
+  tipo TEXT,
+  comisiones INTEGER
+);
+
+-- Crea la tabla de boletas (Debe ser creada después de la de medios de pago).
+CREATE TABLE IF NOT EXISTS boleta (
+  n_serial INTEGER PRIMARY KEY NOT NULL,
+  estado TEXT,
+  fecha TEXT,
+  monto INTEGER,
+  medio_de_pago_id INTEGER,
+  FOREIGN KEY (medio_de_pago_id) REFERENCES medio_de_pago(id)
+);
+
+-- Crea la tabla de productos (Debe ser creada después de la de tipo de productos).
+CREATE TABLE IF NOT EXISTS producto (
+  id INTEGER PRIMARY KEY NOT NULL,
+  nombre TEXT,
+  descripcion TEXT,
+  cantidad INTEGER,
+  precio INTEGER,
+  tipo_id INTEGER,
+  FOREIGN KEY (tipo_id) REFERENCES tipo_producto(id)
+);
+
+-- Crea la tabla de clientes.
+CREATE TABLE IF NOT EXISTS cliente (
+  rut TEXT PRIMARY KEY NOT NULL,
+  nombre TEXT,
+  apellido TEXT,
+  direccion TEXT,
+  telefono INTEGER
+);
+
+-- Crea la tabla de empleados (Debe ser creada después de la de roles).
+CREATE TABLE IF NOT EXISTS empleado (
+  rut TEXT PRIMARY KEY NOT NULL,
+  nombre1 TEXT,
+  nombre2 TEXT,
+  apellido1 TEXT,
+  apellido2 TEXT,
+  direccion TEXT,
+  sueldo_actual INTEGER,
+  telefono INTEGER,
+  rol_id INTEGER,
+  FOREIGN KEY (rol_id) REFERENCES rol(id)
+);
+
+-- Crea la tabla de órdenes (Debe ser creada después de la de boletas, la de clientes y la de empleados).
+CREATE TABLE IF NOT EXISTS orden(
+  id INTEGER PRIMARY KEY NOT NULL,
+  estado TEXT,
+  boleta_n_serial INTEGER NOT NULL,
+  cliente_rut TEXT NOT NULL,
+  empleado_rut TEXT NOT NULL,
+  FOREIGN KEY (boleta_n_serial) REFERENCES boleta(n_serial),
+  FOREIGN KEY (cliente_rut) REFERENCES cliente(rut),
+  FOREIGN KEY (empleado_rut) REFERENCES empleado(rut)
+);
+
+-- Crea la tabla de ingredientes.
+CREATE TABLE IF NOT EXISTS ingrediente (
+  id INTEGER PRIMARY KEY NOT NULL,
+  nombre TEXT,
+  descripcion TEXT,
+  cantidad INTEGER
+);
+
+-- Crea la tabla de reservas (Debe ser creada después de la de órdenes).
+CREATE TABLE IF NOT EXISTS reserva (
+  id INTEGER NOT NULL,
+  hora_busqueda TEXT,
+  estado TEXT,
+  orden_id INTEGER NOT NULL,
+  PRIMARY KEY (id, orden_id),
+  FOREIGN KEY (orden_id) REFERENCES orden(id)
+);
+
+-- Crea la tabla de repartos (Debe ser creada después de la de empleados y la de órdenes).
+CREATE TABLE IF NOT EXISTS reparto (
+  id INTEGER PRIMARY KEY NOT NULL,
+  estado TEXT,
+  indicaciones TEXT,
+  fecha_salida TEXT,
+  fecha_llegada TEXT,
+  empleado_rut TEXT NOT NULL,
+  orden_id INTEGER NOT NULL,
+  FOREIGN KEY (empleado_rut) REFERENCES empleado(rut),
+  FOREIGN KEY (orden_id) REFERENCES orden(id)
+);
+
+-- Crea la tabla de proveedores.
+CREATE TABLE IF NOT EXISTS proveedor (
+  id INTEGER PRIMARY KEY NOT NULL,
+  nombre TEXT,
+  telefono TEXT,
+  contacto TEXT
+);
+
+-- Crea la tabla de registros de sueldo (Debe ser creada después de la de empleados).
+CREATE TABLE IF NOT EXISTS registro_sueldo (
+  id INTEGER PRIMARY KEY NOT NULL,
+  fecha TEXT,
+  monto INTEGER,
+  empleado_rut TEXT NOT NULL,
+  FOREIGN KEY (empleado_rut) REFERENCES empleado(rut)
+);
+
+-- Crea la tabla de lineas de orden (Debe ser creada después de la de productos y la de órdenes).
+CREATE TABLE IF NOT EXISTS linea_orden (
+  id INTEGER PRIMARY KEY NOT NULL,
+  orden_id INTEGER NOT NULL,
+  producto_id INTEGER NOT NULL,
+  cantidad INTEGER,
+  precio_unitario INTEGER,
+  FOREIGN KEY (producto_id) REFERENCES producto(id),
+  FOREIGN KEY (orden_id) REFERENCES orden(id)
+);
+
+-- Crea la tabla que asocia a los empleados con los productos preparados (Debe ser creada después de la de productos y la de empleados).
+CREATE TABLE IF NOT EXISTS empleado_prepara_producto (
+  id INTEGER PRIMARY KEY NOT NULL,
+  producto_id INTEGER NOT NULL,
+ empleado_rut TEXT NOT NULL,
+  fecha TEXT,
+  FOREIGN KEY (producto_id) REFERENCES producto(id),
+  FOREIGN KEY (empleado_rut) REFERENCES empleado(rut)
+);
+
+-- Crea la tabla que asocia a los ingredientes con sus proveedores (Debe ser creada después de la de productos y la de proveedores).
+CREATE TABLE IF NOT EXISTS ingrediente_por_proveedor (
+  ingrediente_id INTEGER NOT NULL,
+  proveedor_id INTEGER NOT NULL,
+  FOREIGN KEY (ingrediente_id) REFERENCES ingrediente(id),
+  FOREIGN KEY (proveedor_id) REFERENCES proveedor(id)
+);
+
+-- Crea la tabla que asocia a los ingredientes con su respectivo producto (Debe ser creada después de la de productos y la de ingredientes).
+CREATE TABLE IF NOT EXISTS ingrediente_por_producto (
+  producto_id INTEGER NOT NULL,
+  ingrediente_id INTEGER NOT NULL,
+  FOREIGN KEY (producto_id) REFERENCES producto(id),
+  FOREIGN KEY (ingrediente_id) REFERENCES ingrediente(id)
+);

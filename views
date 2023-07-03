@@ -1,0 +1,38 @@
+-- Vistas --
+
+-- Ventas por producto.
+CREATE VIEW ventas_producto AS
+SELECT 
+    producto.nombre AS producto, 
+    SUM(linea_orden.cantidad) AS cantidad_vendida,
+    SUM(linea_orden.cantidad * linea_orden.precio_unitario) AS ingresos_generados
+FROM 
+    producto 
+JOIN 
+    linea_orden ON producto.id = linea_orden.producto_id
+GROUP BY 
+    producto.nombre;
+   
+-- Muestra la productividad de los cajeros.
+CREATE VIEW productividad_cajeros AS
+SELECT 
+    empleado.nombre1 AS nombre_empleado, 
+    COUNT(orden.id) AS ordenes_manejadas
+FROM 
+    empleado
+JOIN 
+    orden ON empleado.rut = orden.empleado_rut
+GROUP BY 
+    empleado.nombre1;
+   
+-- Muestra la frecuencia de los clientes.
+CREATE VIEW clientes_frecuentes AS
+SELECT 
+    cliente.nombre AS nombre_cliente, 
+    COUNT(orden.id) AS ordenes_realizadas
+FROM 
+    cliente 
+JOIN 
+    orden ON cliente.rut = orden.cliente_rut
+GROUP BY 
+    cliente.nombre;
